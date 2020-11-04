@@ -10,11 +10,7 @@ use Illuminate\Support\Facades\Auth;
 
 class StockController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
+
     public function index()
     {
         $currentUser = Auth::user();
@@ -25,12 +21,6 @@ class StockController extends Controller
         return response()->json(['message' => "You Not Have Permission"], 403);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
     public function store(Request $request, $id)
     {
         $currentUser = Auth::user();

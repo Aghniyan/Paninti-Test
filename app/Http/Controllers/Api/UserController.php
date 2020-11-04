@@ -26,6 +26,7 @@ class UserController extends Controller
         return response()->json(['message' => "You Not Have Permission"], 403);
     }
 
+
     /**
      * Store a newly created resource in storage.
      *

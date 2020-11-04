@@ -36,4 +36,11 @@ class AuthController extends Controller
              'error' => "Your Credential is not match"
          ],401);
     }
+
+    public function cek_user()
+    {
+        $user = Auth::user();
+
+        return new UserResource($user);
+    }
 }
