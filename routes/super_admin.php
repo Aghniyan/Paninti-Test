@@ -51,8 +51,13 @@ Route::group(['middleware' => 'auth:api'], function () {
 });
 
 //Route CRUD STOK Produk di Super admin
-Route::group(['prefix' => 'stock','middleware' => 'auth:api'], function () {
-
+Route::group(['middleware' => 'auth:api'], function () {
+    Route::get('stock','Api\StockController@index');
+    Route::get('stock/{id}','Api\StockController@show');
+    Route::get('stock/shop/{id}','Api\StockController@show_shop');
+    Route::post('stock/{id}','Api\StockController@store');
+    Route::put('stock/{id}','Api\StockController@update');
+    Route::delete('stock/{id}','Api\StockController@destroy');
 });
 
 
