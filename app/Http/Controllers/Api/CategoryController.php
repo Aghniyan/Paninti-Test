@@ -47,6 +47,18 @@ class CategoryController extends Controller
 
             return new CategoryResource($category);
         }
+        if ($currentUser->role == 'Admin') {
+            $this->validate($request, [
+                'name' => 'required|max:255',
+                'shop_id' => 'required'
+            ]);
+            $category = Category::create([
+                'name' => $request->name,
+                'shop_id' => $request->shop_id
+            ]);
+
+            return new CategoryResource($category);
+        }
         return response()->json(['message' => "You Not Have Permission"], 403);
     }
 
@@ -102,6 +114,16 @@ class CategoryController extends Controller
 
             return new CategoryResource($category);
         }
+        if ($currentUser->role == 'Admin') {
+            $this->validate($request, [
+                'name' => 'required|max:255'
+            ]);
+            $category->update([
+                'name' => $request->name
+            ]);
+
+            return new CategoryResource($category);
+        }
         return response()->json(['message' => "You Not Have Permission"], 403);
     }
 
@@ -119,6 +141,10 @@ class CategoryController extends Controller
             return response()->json(['message' => "Category Not Found"], 404);
         }
         if ($currentUser->role == 'Super Admin') {
+            $category->delete();
+            return response()->json(['message' => "Category Deleted"], 200);
+        }
+        if ($currentUser->role == 'Admin') {
             $category->delete();
             return response()->json(['message' => "Category Deleted"], 200);
         }

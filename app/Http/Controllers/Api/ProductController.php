@@ -21,7 +21,7 @@ class ProductController extends Controller
     public function index()
     {
         $currentUser = Auth::user();
-        if ($currentUser->role == 'Super Admin') {
+        if ($currentUser->role == 'Super Admin' or $currentUser->role == 'Admin'  ) {
             $products = Product::latest()->get();
             return ProductResource::collection($products);
         }
@@ -37,7 +37,7 @@ class ProductController extends Controller
     public function store(Request $request, Shop $shop)
     {
         $currentUser = Auth::user();
-        if ($currentUser->role == 'Super Admin') {
+        if ($currentUser->role == 'Super Admin'  or $currentUser->role == 'Admin') {
             $category = Category::where('shop_id', $shop->id)->where('id', $request->category_id)->first();
             if ($shop == null) {
                 return response()->json(['message' => "Shop Not Found"], 404);
@@ -77,7 +77,7 @@ class ProductController extends Controller
             return response()->json(['message' => "Product Not Found"], 404);
         }
         $currentUser = Auth::user();
-        if ($currentUser->role == 'Super Admin') {
+        if ($currentUser->role == 'Super Admin'  or $currentUser->role == 'Admin') {
             return new ProductResource($product);
         }
         return response()->json(['message' => "You Not Have Permission"], 403);
@@ -88,7 +88,7 @@ class ProductController extends Controller
         $product = Product::where('shop_id', $id)->get();
 
         $currentUser = Auth::user();
-        if ($currentUser->role == 'Super Admin') {
+        if ($currentUser->role == 'Super Admin'  or $currentUser->role == 'Admin') {
 
             if ($product == null) {
                 return response()->json(['message' => "Product Not Found"], 404);
@@ -109,7 +109,7 @@ class ProductController extends Controller
     public function update(Request $request, $id)
     {
         $currentUser = Auth::user();
-        if ($currentUser->role == 'Super Admin') {
+        if ($currentUser->role == 'Super Admin'  or $currentUser->role == 'Admin') {
             $category = Category::where('shop_id', $request->shop_id)->where('id', $request->category_id)->first();
             if ($category == null) {
                 return response()->json(['message' => "Category Not Found"], 404);
@@ -146,7 +146,7 @@ class ProductController extends Controller
             return response()->json(['message' => "Product Not Found"], 404);
         }
         $currentUser = Auth::user();
-        if ($currentUser->role == 'Super Admin') {
+        if ($currentUser->role == 'Super Admin'  or $currentUser->role == 'Admin') {
             $product->delete();
 
             return response()->json(['message' => "Product Delete"], 200);

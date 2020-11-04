@@ -25,7 +25,7 @@ class StockController extends Controller
     {
         $currentUser = Auth::user();
         $product = Product::find($id);
-        if ($currentUser->role == 'Super Admin') {
+        if ($currentUser->role == 'Super Admin'  or $currentUser->role == 'Admin') {
             $stock = $product->stock;
             if ($product == null) {
                 return response()->json(['message' => "product Not Found"], 404);
@@ -84,7 +84,7 @@ class StockController extends Controller
     {
         $currentUser = Auth::user();
         $product = Product::find($id);
-        if ($currentUser->role == 'Super Admin') {
+        if ($currentUser->role == 'Super Admin'  or $currentUser->role == 'Admin') {
             $stock = $product->stock;
             if ($product == null) {
                 return response()->json(['message' => "product Not Found"], 404);
@@ -124,7 +124,7 @@ class StockController extends Controller
     {
         $currentUser = Auth::user();
         $product = Product::find($id);
-        if ($currentUser->role == 'Super Admin') {
+        if ($currentUser->role == 'Super Admin'  or $currentUser->role == 'Admin') {
             $stock = $product->stock;
             if ($product == null) {
                 return response()->json(['message' => "product Not Found"], 404);
