@@ -58,7 +58,24 @@ class CategoryController extends Controller
      */
     public function show($id)
     {
-        //
+
+        $currentUser = Auth::user();
+        if ($currentUser->role == 'Super Admin' or $currentUser->role == 'Admin') {
+            $category = Category::find($id);
+            return new CategoryResource($category);
+        }
+        return response()->json(['message' => "You Not Have Permission"], 403);
+    }
+
+    public function show_shop($id)
+    {
+
+        $currentUser = Auth::user();
+        if ($currentUser->role == 'Super Admin' or $currentUser->role == 'Admin') {
+            $category = Category::where('shop_id',$id)->get();
+            return CategoryResource::collection($category);
+        }
+        return response()->json(['message' => "You Not Have Permission"], 403);
     }
 
     /**

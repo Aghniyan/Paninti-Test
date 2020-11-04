@@ -34,7 +34,8 @@ Route::group(['middleware' => 'auth:api'], function () {
 Route::group(['middleware' => 'auth:api'], function () {
     Route::get('product','Api\ProductController@index');
     Route::get('product/{id}','Api\ProductController@show');
-    Route::post('product','Api\ProductController@store');
+    Route::get('product/shop/{id}','Api\ProductController@show_shop');
+    Route::post('product/shop/{shop:id}','Api\ProductController@store');
     Route::put('product/{id}','Api\ProductController@update');
     Route::delete('product/{id}','Api\ProductController@destroy');
 });
@@ -43,6 +44,7 @@ Route::group(['middleware' => 'auth:api'], function () {
 Route::group(['middleware' => 'auth:api'], function () {
     Route::get('category','Api\CategoryController@index');
     Route::get('category/{id}','Api\CategoryController@show');
+    Route::get('category/shop/{id}','Api\CategoryController@show_shop');
     Route::post('category','Api\CategoryController@store');
     Route::put('category/{id}','Api\CategoryController@update');
     Route::delete('category/{id}','Api\CategoryController@destroy');
