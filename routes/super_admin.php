@@ -16,6 +16,9 @@ Route::group(['middleware' => 'auth:api'], function () {
     Route::post('shop','Api\ShopController@store');
     Route::put('shop/{id}','Api\ShopController@update');
     Route::delete('shop/{id}','Api\ShopController@destroy');
+
+    Route::put('assign/{id}','Api\ShopController@assign');
+    // Route::put('shop/{id}/detail','Api\ShopController@update_detail');
 });
 
 //Route CRUD Admin di Super Admin

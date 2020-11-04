@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\ShopResource;
 use App\Shop;
+use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -19,7 +20,7 @@ class ShopController extends Controller
     {
         $currentUser = Auth::user();
         if ($currentUser->role == 'Super Admin') {
-            $shops = Shop::get();
+            $shops = Shop::latest()->get();
             return ShopResource::collection($shops);
         }
         return response()->json(['message' => "You Not Have Permission"], 403);
@@ -59,14 +60,13 @@ class ShopController extends Controller
      */
     public function show($id)
     {
-        $shop = Shop::find($id);
         $currentUser = Auth::user();
         if ($currentUser->role == 'Super Admin') {
-            if ($shop==null) {
+            $shop = Shop::find($id);
+            if ($shop == null) {
                 return response()->json(['message' => "Shop Not Found"], 404);
             }
-            $shops = Shop::get();
-            return ShopResource::collection($shops);
+            return new ShopResource($shop);
         }
         return response()->json(['message' => "You Not Have Permission"], 403);
     }
@@ -83,7 +83,7 @@ class ShopController extends Controller
         $shop = Shop::find($id);
         $currentUser = Auth::user();
         if ($currentUser->role == 'Super Admin') {
-            if ($shop==null) {
+            if ($shop == null) {
                 return response()->json(['message' => "Shop Not Found"], 404);
             }
             $this->validate($request, [
@@ -95,6 +95,44 @@ class ShopController extends Controller
                 'name' => $request->name,
                 'info' => $request->info,
                 'address' => $request->address
+            ]);
+
+            return new ShopResource($shop);
+        }
+        return response()->json(['message' => "You Not Have Permission"], 403);
+    }
+    /**
+     * Assign Admin To Toko.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function assign(Request $request, $id)
+    {
+        $shop = Shop::find($id);
+        $admin = User::find($request->user_id);
+        $currentUser = Auth::user();
+        if ($currentUser->role == 'Super Admin') {
+            if ($shop == null) {
+                return response()->json(['message' => "Shop Not Found"], 404);
+            }
+            if ($shop->user_id != null) {
+                return response()->json(['message' => "Shop Was Assigned By Other admin"], 404);
+            }
+            if ($admin == null) {
+                return response()->json(['message' => "Admin Not Found"], 404);
+            }
+            if ($admin->role != "Admin") {
+                return response()->json(['message' => "This is not Admin"], 404);
+            }
+            $this->validate($request, [
+                'user_id' => 'required',
+                'contact' => 'required',
+            ]);
+            $shop->update([
+                'user_id' => $request->user_id,
+                'contact' => $request->contact
             ]);
 
             return new ShopResource($shop);
@@ -114,7 +152,7 @@ class ShopController extends Controller
         $currentUser = Auth::user();
         if ($currentUser->role == 'Super Admin') {
 
-            if ($shop==null) {
+            if ($shop == null) {
                 return response()->json(['message' => "Shop Not Found"], 404);
             }
             $shop->delete();

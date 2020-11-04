@@ -7,6 +7,7 @@ use App\Http\Resources\UserResource;
 use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
 
 class UserController extends Controller
 {
@@ -17,11 +18,12 @@ class UserController extends Controller
      */
     public function index()
     {
-        $user = Auth::user();
-        if ($user->role == "Super Admin") {
-            $admin = User::where('role','Admin')->latest()->paginate(10);
+        $currentUser = Auth::user();
+        if ($currentUser->role == 'Super Admin') {
+            $admin = User::where('role', 'Admin')->latest()->get();
+            return UserResource::collection($admin);
         }
-        return new UserResource($admin);
+        return response()->json(['message' => "You Not Have Permission"], 403);
     }
 
     /**
@@ -32,7 +34,23 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $currentUser = Auth::user();
+        if ($currentUser->role == 'Super Admin') {
+            $this->validate($request, [
+                'name' => 'required|min:3|max:255',
+                'email' => 'required|email|unique:users,email',
+                'password' => 'required|min:8'
+            ]);
+            $user = User::create([
+                'name' => $request->name,
+                'email' => $request->email,
+                'password' => bcrypt($request->password),
+                'role' => "Admin",
+                'api_token' => Str::random(80)
+            ]);
+            return new UserResource($user);
+        }
+        return response()->json(['message' => "You Not Have Permission"], 403);
     }
 
     /**
@@ -41,9 +59,18 @@ class UserController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show()
+    public function show($id)
     {
-        //
+        $admin = User::find($id);
+        $currentUser = Auth::user();
+        if ($currentUser->role == 'Super Admin') {
+            if ($admin == null) {
+                return response()->json(['message' => "Admin Not Found"], 404);
+            }
+            $admin = User::where('role', 'Admin')->where('id',$id)->get();
+            return new UserResource($admin);
+        }
+        return response()->json(['message' => "You Not Have Permission"], 403);
     }
 
     /**
@@ -55,7 +82,26 @@ class UserController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $admin = User::find($id);
+        $currentUser = Auth::user();
+        if ($currentUser->role == 'Super Admin') {
+            if ($admin == null) {
+                return response()->json(['message' => "admin Not Found"], 404);
+            }
+            $this->validate($request, [
+                'name' => 'required|min:3|max:255',
+                'email' => 'required|email',
+                'password' => 'required|min:8'
+            ]);
+            $admin->update([
+                'name' => $request->name,
+                'email' => $request->email,
+                'password' => bcrypt($request->password)
+            ]);
+
+            return new UserResource($admin);
+        }
+        return response()->json(['message' => "You Not Have Permission"], 403);
     }
 
     /**
@@ -66,6 +112,16 @@ class UserController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $admin = User::find($id);
+        $currentUser = Auth::user();
+        if ($currentUser->role == 'Super Admin') {
+
+            if ($admin == null) {
+                return response()->json(['message' => "admin Not Found"], 404);
+            }
+            $admin->delete();
+            return response()->json(['message' => "admin Deleted"], 200);
+        }
+        return response()->json(['message' => "You Not Have Permission"], 403);
     }
 }
