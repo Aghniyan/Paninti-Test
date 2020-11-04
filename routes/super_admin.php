@@ -40,7 +40,7 @@ Route::group(['middleware' => 'auth:api'], function () {
 });
 
 //Route CRUD Kategori Produk di Super admin
-Route::group(['prefix' => 'category','middleware' => 'auth:api'], function () {
+Route::group(['middleware' => 'auth:api'], function () {
     Route::get('category','Api\CategoryController@index');
     Route::get('category/{id}','Api\CategoryController@show');
     Route::post('category','Api\CategoryController@store');
