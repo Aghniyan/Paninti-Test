@@ -79,7 +79,6 @@ Sebelum menjalankan program ini ada beberapa langkah installasi yang harus diker
 Buka Aplikasi Postman dengan link berikut
 
 > [![Run in Postman](https://ww1.prweb.com/prfiles/2018/10/05/16050123/postman-logo-vert-2018.png)](https://app.getpostman.com/run-collection/a1bb753b18835e01b425)
-
 ### Fitur Login
 
 apabila di awal installasi menggunakan import sql ke phpmyadmin maka username dan password defaultnya adalah :
